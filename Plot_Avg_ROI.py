@@ -1,4 +1,5 @@
 # @Dataset data
+# @OUTPUT Dataset output
 # @DatasetService datasetService
 # @DisplayService displayService
 # @OpService ops
@@ -35,7 +36,6 @@ for z in range(data.max(data.dimensionIndex(Axes.Z))):
 # Display cropped images
 images = ops.run('transform.stackView', [images])
 output = datasetService.create(images)
-displayService.createDisplay('Cropped', output)
 
 # Display plot
 plot = Plot('Mean Intensity vs. Slice', 'Slice', 'Mean Intensity', slice_indices, mean_intensities) 
