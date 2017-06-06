@@ -2,7 +2,7 @@
 # @OUTPUT Dataset output
 # @OpService ops
 # @DatasetService datasetService
-# @File f
+# @DisplayService displayService
 
 # Subtract the first frame of a stack to all the frames of the given stack along the TIME axis.
 # It removes the static elements from a stack. Usefull when you are studying moving objects.
@@ -13,36 +13,17 @@ from net.imagej.axis import Axes
 # Convert input
 converted = ops.convert().float32(data)
  
-# Get the first frame
-
-
-
-
+# Get the frame to subtract out
+z_idx = 1 # Change this to choose frame
+intervals = Intervals.createMinMax(0, 0, z_idx, data.getWidth() - 1, data.getHeight() - 1, z_idx)
+frame = ops.transform().crop(converted, intervals)
 t_dim = data.dimensionIndex(Axes.Z) # Should actually be TIME but our images use Z
-interval_start = []
-interval_end = []
-for d in range(0, data.numDimensions()):
-    if d != t_dim:
-        interval_start.append(0)
-        interval_end.append(data.dimension(d) - 1)
-    else:
-        interval_start.append(9) # Index of image before illumination
-        interval_end.append(9)
-         
-intervals = interval_start + interval_end
-intervals = Intervals.createMinMax(*intervals)
- 
-first_frame = ops.transform().crop(converted, intervals)
-
-
-
-
  
 # Allocate output memory (wait for hybrid CF version of slice)
 subtracted = ops.create().img(converted)
  
 # Create the op
-sub_op =  ops.op("math.subtract", first_frame, first_frame)
+sub_op =  ops.op("math.subtract", frame, frame)
  
 # Setup the fixed axis
 fixed_axis = [d for d in range(0, data.numDimensions()) if d != t_dim]
