@@ -1,11 +1,11 @@
+# @String(label="Slice number:", required=true) slice_number
 # @Dataset data
 # @OUTPUT Dataset output
 # @OpService ops
 # @DatasetService datasetService
 # @DisplayService displayService
 
-# Subtract the first frame of a stack to all the frames of the given stack along the TIME axis.
-# It removes the static elements from a stack. Usefull when you are studying moving objects.
+# Subtract the nth frame of a stack to all the frames of the given stack along the TIME axis.
  
 from net.imglib2.util import Intervals
 from net.imagej.axis import Axes
@@ -14,7 +14,7 @@ from net.imagej.axis import Axes
 converted = ops.convert().float32(data)
  
 # Get the frame to subtract out
-z_idx = 1 # Change this to choose frame
+z_idx = int(slice_number) - 1
 intervals = Intervals.createMinMax(0, 0, z_idx, data.getWidth() - 1, data.getHeight() - 1, z_idx)
 frame = ops.transform().crop(converted, intervals)
 t_dim = data.dimensionIndex(Axes.Z) # Should actually be TIME but our images use Z
